@@ -5,6 +5,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>PZPack</Title>
+    <PackageId>DrAbc.PZPack</PackageId>
+    <Authors>Dr.Abc</Authors>
+    <Product>PZPack</Product>
+    <Description>.NET library to read and write the pack file format for Project Zomboid</Description>
+    <RepositoryUrl>https://github.com/DrAbcOfficial/PZPack</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>project zomboid;pack;library</PackageTags>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
