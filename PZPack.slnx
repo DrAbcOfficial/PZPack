@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="PZPack.Test/PZPack.Test.csproj" Id="72a73a59-20aa-44d3-b140-6f8d75054ee8" />
+  <Project Path="PZPack/PZPack.csproj" />
+</Solution>
