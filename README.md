@@ -20,6 +20,18 @@ PZPack is a C# library for handling Project Zomboid game resource pack formats.
 
 ## 安装 (Installation)
 
+### 通过 NuGet 安装 (Install via NuGet)
+
+您可以通过 NuGet 包管理器安装 PZPack：
+
+[https://www.nuget.org/packages/DrAbc.PZPack](https://www.nuget.org/packages/DrAbc.PZPack)
+
+You can install PZPack via NuGet Package Manager:
+
+[https://www.nuget.org/packages/DrAbc.PZPack](https://www.nuget.org/packages/DrAbc.PZPack)
+
+### 手动安装 (Manual Installation)
+
 将 PZPack 项目添加到您的解决方案中：
 
 1. 克隆或下载此仓库
