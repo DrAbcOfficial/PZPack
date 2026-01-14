@@ -1,0 +1,41 @@
+name: NuGet Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build with Release configuration
+      run: dotnet build --no-restore -c Release
+
+    - name: Run tests
+      run: dotnet test --no-build -c Release --verbosity normal
+
+    - name: Pack NuGet packages
+      run: dotnet pack --no-build -c Release
+
+    - name: Publish to GitHub Packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages
+        path: |
+          **/*.nupkg
+          **/*.snupkg
