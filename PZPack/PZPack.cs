@@ -9,7 +9,6 @@ namespace PZPack;
 public abstract class PZPack : IPZPack
 {
     private PZPage[] _pages;
-    private byte[] _png;
 
     /// <summary>
     /// Project zomboid pack type
@@ -21,7 +20,6 @@ public abstract class PZPack : IPZPack
     public PZPack()
     {
         _pages = [];
-        _png = [];
     }
     /// <summary>
     /// Texture Atlas
@@ -30,14 +28,6 @@ public abstract class PZPack : IPZPack
     {
         get { return _pages; }
         set { _pages = value; }
-    }
-    /// <summary>
-    /// Image data, in PNG format
-    /// </summary>
-    public byte[] Png
-    {
-        get { return _png; }
-        set { _png = value; }
     }
     /// <summary>
     /// Encodes the PZPack into the specified stream

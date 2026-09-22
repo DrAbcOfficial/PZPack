@@ -28,13 +28,9 @@ public interface IPZPack
     /// </summary>
     public PZPackType Type { get; }
     /// <summary>
-    /// Texture Atlas
+    /// Texture Atlas pages, each carrying its own PNG atlas image
     /// </summary>
     public PZPage[] Pages { get; set; }
-    /// <summary>
-    /// Image data, in PNG format
-    /// </summary>
-    public byte[] Png { get; set; }
 
     /// <summary>
     /// Encodes the PZPack into the specified stream

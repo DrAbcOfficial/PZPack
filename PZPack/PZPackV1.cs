@@ -1,5 +1,6 @@
-using PZPack.Interface;
+using System.Buffers.Binary;
 using PZPack.Exceptions;
+using PZPack.Interface;
 using static PZPack.Interface.IPZPack;
 
 namespace PZPack;
@@ -9,6 +10,8 @@ namespace PZPack;
 /// </summary>
 public class PZPackV1 : PZPack, IPZPackV1
 {
+    private static readonly byte[] PngSignature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+
     private readonly uint _end_marker;
 
     /// <summary>
@@ -40,12 +43,14 @@ public class PZPackV1 : PZPack, IPZPackV1
         List<PZPage> pages = [];
         for (uint i = 0; i < page_count; i++)
         {
-            pages.Add(new PZPage(br));
+            PZPage page = new(br);
+            page.Png = ReadPagePng(br);
+            pages.Add(page);
+            uint marker = br.ReadUInt32();
+            if (marker != IPZPackV1.PZ_PACKV1_END_MARKER)
+                throw new PZPackFormatException("Page is not terminated by the PZPackV1 end marker.");
         }
         Pages = [.. pages];
-        byte[] png = new byte[stream.Length - stream.Position - 4];
-        br.Read(png);
-        Png = png;
     }
     /// <summary>
     /// end marker
@@ -58,6 +63,33 @@ public class PZPackV1 : PZPack, IPZPackV1
     public override PZPackType Type  => PZPackType.V1;
 
     /// <summary>
+    /// Reads one raw PNG stream (no length prefix) starting at the current position.
+    /// The stream ends at the IEND chunk, which is part of the returned data.
+    /// </summary>
+    private static byte[] ReadPagePng(BinaryReader br)
+    {
+        Stream stream = br.BaseStream;
+        long start = stream.Position;
+        Span<byte> header = stackalloc byte[8];
+        if (stream.Read(header) != 8 || !header.SequenceEqual(PngSignature))
+            throw new PZPackFormatException("Page image is not a PNG stream.");
+        long position = start + 8;
+        while (true)
+        {
+            stream.Seek(position, SeekOrigin.Begin);
+            if (stream.Read(header) != 8)
+                throw new PZPackFormatException("Page image ends inside a PNG chunk.");
+            uint length = BinaryPrimitives.ReadUInt32BigEndian(header);
+            bool isIend = header[4..].SequenceEqual("IEND"u8);
+            position += 8 + length + 4;
+            if (isIend)
+                break;
+        }
+        stream.Seek(start, SeekOrigin.Begin);
+        return br.ReadBytes((int)(position - start));
+    }
+
+    /// <summary>
     /// Encodes the PZPackV1 into a stream
     /// </summary>
     /// <param name="stream">The stream to encode into</param>
@@ -68,8 +100,8 @@ public class PZPackV1 : PZPack, IPZPackV1
         foreach(var page in Pages)
         {
             page.Encode(bw);
+            bw.Write(page.Png);
+            bw.Write(_end_marker);
         }
-        bw.Write(Png);
-        bw.Write(_end_marker);
     }
 }

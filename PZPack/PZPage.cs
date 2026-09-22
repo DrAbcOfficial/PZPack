@@ -10,6 +10,7 @@ public class PZPage
     private string _name;
     private PZEntry[] _entries;
     private int _mask;
+    private byte[] _png;
     /// <summary>
     /// Initializes a new instance of PZPage with default values
     /// </summary>
@@ -18,6 +19,7 @@ public class PZPage
         _name = string.Empty;
         _entries = [];
         _mask = 0;
+        _png = [];
     }
     internal PZPage(BinaryReader br)
     {
@@ -31,6 +33,7 @@ public class PZPage
             entries.Add(new PZEntry(br));
         }
         _entries = [.. entries];
+        _png = [];
     }
     /// <summary>
     /// Texture Name
@@ -56,7 +59,20 @@ public class PZPage
         get { return _mask; }
         set { _mask = value; }
     }
+    /// <summary>
+    /// Image data of this page's atlas, in PNG format.
+    /// Every page stores its own atlas image.
+    /// </summary>
+    public byte[] Png
+    {
+        get { return _png; }
+        set { _png = value; }
+    }
 
+    /// <summary>
+    /// Writes the page directory (name, mask and entries).
+    /// The PNG payload framing differs per pack version and is written by the pack itself.
+    /// </summary>
     internal void Encode(BinaryWriter bw)
     {
         byte[] name_bytes = Encoding.UTF8.GetBytes(_name);

@@ -36,11 +36,12 @@ public class PZPackV2 : PZPack, IPZPackV2
         List<PZPage> pages = [];
         for (uint i = 0; i < page_count; i++)
         {
-            pages.Add(new PZPage(br));
+            PZPage page = new(br);
+            uint image_data_len = br.ReadUInt32();
+            page.Png = br.ReadBytes((int)image_data_len);
+            pages.Add(page);
         }
         Pages = [.. pages];
-        uint image_data_len = br.ReadUInt32();
-        Png = br.ReadBytes((int)image_data_len);
     }
 
     /// <summary>
@@ -73,8 +74,8 @@ public class PZPackV2 : PZPack, IPZPackV2
         foreach (var page in Pages)
         {
             page.Encode(bw);
+            bw.Write((uint)page.Png.Length);
+            bw.Write(page.Png);
         }
-        bw.Write((uint)Png.Length);
-        bw.Write(Png);
     }
 }
